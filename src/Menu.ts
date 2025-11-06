@@ -168,6 +168,7 @@ export function main() {
           console.log("Conta não encontrada.");
         }
         keyPress();
+
         break;
 
       case 8:
