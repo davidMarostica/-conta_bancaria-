@@ -1,5 +1,4 @@
 import { Conta } from "./Conta";
-import { TipoConta } from "./TipoConta";
 
 export class ContaPoupanca extends Conta {
   private _aniversario: number;
@@ -13,9 +12,6 @@ export class ContaPoupanca extends Conta {
     aniversario: number
   ) {
     super(numero, agencia, tipo, titular, saldo);
-
-    if (aniversario < 1 || aniversario > 31)
-      throw new Error("Dia do aniversário deve ser entre 1 e 31");
     this._aniversario = aniversario;
   }
 
@@ -24,14 +20,13 @@ export class ContaPoupanca extends Conta {
   }
 
   public set aniversario(aniversario: number) {
-    if (aniversario < 1 || aniversario > 31)
-      throw new Error("Dia do aniversário deve ser entre 1 e 31");
     this._aniversario = aniversario;
   }
 
+  // Método Visualizar Override
   public visualizar(): void {
     super.visualizar();
-    console.log("Dia do aniversário: " + this._aniversario);
-    console.log();
+    console.log(`Dia do aniversário: ${this._aniversario}`);
+    console.log("*****************************************************");
   }
 }
