@@ -1,115 +1,117 @@
 import { Conta } from "../model/Conta";
-import { ContaRepository } from "../repository/ContaRepository";
+import { IContaRepository } from "../repository/IContaRepository";
 
-export class ContaController implements ContaRepository {
+export class ContaController implements IContaRepository {
   private listaContas: Conta[] = [];
   private numero: number = 0;
 
-  // Método Auxiliar - Buscar Conta no Array
-  public buscarNaCollection(numero: number): Conta | null {
-    for (let conta of this.listaContas) {
-      if (conta.numero === numero) {
-        return conta;
-      }
-    }
-    return null;
+  // Buscar conta na lista
+  private buscarNaCollection(numero: number): Conta | null {
+    return this.listaContas.find((conta) => conta.numero === numero) || null;
   }
 
-  // Método Auxiliar - Gerar Número da Conta
+  // Gerar número da conta
   public gerarNumero(): number {
     return ++this.numero;
   }
 
-  // Implementação dos Métodos da Interface
+  // Procurar conta por número
   public procurarPorNumero(numero: number): Conta | null {
-    return this.buscarNaCollection(numero);
+    const conta = this.buscarNaCollection(numero);
+    if (conta) {
+      return conta;
+    } else {
+      console.log(`\nA Conta número: ${numero} não foi encontrada!`);
+      return null;
+    }
   }
 
+  // Listar todas as contas
   public listarTodas(): Conta[] {
     return this.listaContas;
   }
 
+  // Cadastrar conta
   public cadastrar(conta: Conta): void {
     this.listaContas.push(conta);
-    console.log(
-      "\nA Conta número: " + conta.numero + " foi criada com sucesso!"
-    );
+    console.log(`\nA Conta número: ${conta.numero} foi criada com sucesso!`);
   }
 
+  // Atualizar conta
   public atualizar(conta: Conta): void {
-    let buscaConta = this.buscarNaCollection(conta.numero);
-
-    if (buscaConta !== null) {
-      let indice = this.listaContas.indexOf(buscaConta);
-      this.listaContas[indice] = conta;
+    const index = this.listaContas.findIndex((c) => c.numero === conta.numero);
+    if (index !== -1) {
+      this.listaContas[index] = conta;
       console.log(
-        "\nA Conta número: " + conta.numero + " foi atualizada com sucesso!"
+        `\nA Conta número: ${conta.numero} foi atualizada com sucesso!`
       );
     } else {
-      console.log("\nA Conta número: " + conta.numero + " não foi encontrada!");
+      console.log(`\nA Conta número: ${conta.numero} não foi encontrada!`);
     }
   }
 
+  // Deletar conta
   public deletar(numero: number): void {
-    let conta = this.buscarNaCollection(numero);
-
-    if (conta !== null) {
-      let indice = this.listaContas.indexOf(conta);
-      this.listaContas.splice(indice, 1);
-      console.log("\nA Conta número: " + numero + " foi deletada com sucesso!");
+    const index = this.listaContas.findIndex(
+      (conta) => conta.numero === numero
+    );
+    if (index !== -1) {
+      this.listaContas.splice(index, 1);
+      console.log(`\nA Conta número: ${numero} foi deletada com sucesso!`);
     } else {
-      console.log("\nA Conta número: " + numero + " não foi encontrada!");
+      console.log(`\nA Conta número: ${numero} não foi encontrada!`);
     }
   }
 
+  // Sacar
   public sacar(numero: number, valor: number): void {
-    let conta = this.buscarNaCollection(numero);
+    const conta = this.buscarNaCollection(numero);
 
-    if (conta !== null) {
+    if (conta) {
       if (conta.sacar(valor)) {
         console.log(
-          "\nO Saque na Conta número: " + numero + " foi efetuado com sucesso!"
+          `\nO Saque na Conta número: ${numero} foi efetuado com sucesso!`
         );
       }
     } else {
-      console.log("\nA Conta número: " + numero + " não foi encontrada!");
+      console.log(`\nA Conta número: ${numero} não foi encontrada!`);
     }
   }
 
+  // Depositar
   public depositar(numero: number, valor: number): void {
-    let conta = this.buscarNaCollection(numero);
+    const conta = this.buscarNaCollection(numero);
 
-    if (conta !== null) {
+    if (conta) {
       conta.depositar(valor);
       console.log(
-        "\nO Depósito na Conta número: " + numero + " foi efetuado com sucesso!"
+        `\nO Depósito na Conta número: ${numero} foi efetuado com sucesso!`
       );
     } else {
-      console.log("\nA Conta número: " + numero + " não foi encontrada!");
+      console.log(`\nA Conta número: ${numero} não foi encontrada!`);
     }
   }
 
+  // Transferir
   public transferir(
     numeroOrigem: number,
     numeroDestino: number,
     valor: number
   ): void {
-    let contaOrigem = this.buscarNaCollection(numeroOrigem);
-    let contaDestino = this.buscarNaCollection(numeroDestino);
+    const contaOrigem = this.buscarNaCollection(numeroOrigem);
+    const contaDestino = this.buscarNaCollection(numeroDestino);
 
-    if (contaOrigem !== null && contaDestino !== null) {
+    if (contaOrigem && contaDestino) {
       if (contaOrigem.sacar(valor)) {
         contaDestino.depositar(valor);
         console.log(
-          "\nA Transferência da Conta número: " +
-            numeroOrigem +
-            " para a Conta número: " +
-            numeroDestino +
-            " foi efetuada com sucesso!"
+          `\nTransferência de R$ ${valor.toFixed(
+            2
+          )} da conta ${numeroOrigem} para ${numeroDestino} efetuada com sucesso!`
         );
       }
     } else {
-      console.log("\nUma ou mais contas não foram encontradas!");
+      console.log(`\nA Conta de Origem e/ou Destino não foram encontradas!`);
     }
   }
 }

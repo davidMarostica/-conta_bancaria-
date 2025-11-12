@@ -1,8 +1,8 @@
 import * as readline from "readline-sync";
 import { colors } from "./util/Colors";
-import { ContaController } from "./controller/ContaController";
 import { ContaCorrente } from "./model/ContaCorrente";
 import { ContaPoupanca } from "./model/ContaPoupanca";
+import { ContaController } from "./controller/ContaController";
 
 export function main() {
   // Cria a instância do Controller
